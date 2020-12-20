@@ -51,6 +51,28 @@ function Pagination({page_number, totalPages, setPageNumber}){
   )
 }
 
+async function open_weather(country){
+  let url = "https://api.openweathermap.org/data/2.5/weather?lat="+country['latlng'][0]+"&lon="+country['latlng'][1]+"&appid=ea17e7428718f47c4451abbb9fe177f5";
+  let st = "";
+  try {
+      var response = await fetch(url);
+      if(response.status === 200){
+          var data = await response.json();
+          let temp = data['main']['temp'] - 271.15;
+          st += "Country -> "+country.name+'\n\n';
+          st += "Weather -> "+data['weather'][0]['description']+'\n\n';
+          st += "Temperature -> "+temp+' degree Celsius\n\n';
+          st += "Wind Speed -> "+data['wind']['speed']+ " meter/sec";
+          alert(st);
+      }
+      else{
+          throw new Error(`Status ${response.status}`);
+      }
+  } catch (error) {
+      alert(`Error Occured: ${error}`)
+  }
+}
+
 function Countries({countries}) {
   return (
     <div className="row mb-3">
@@ -69,6 +91,7 @@ function Countries({countries}) {
               <p>Latitude: {item['latlng'][0]}</p>
               <p>Longitude: {item['latlng'][1]}</p>
               <p>Country Code: {item['alpha3Code']}</p>
+              <button class="btn btn-primary" onClick={()=>open_weather(item)}>Weather Update</button>
             </div>
           </div>
         </div>
